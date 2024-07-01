@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class LoggingLevel
+ *
+ * Defines constants for different logging levels.
+ */
 class LoggingLevel
 {
     const INFO = 'INFO';
@@ -10,18 +15,32 @@ class LoggingLevel
     const DEBUG = 'DEBUG';
 }
 
+/**
+ * Class CustomLogger
+ *
+ * Provides custom logging functionality with different logging levels.
+ */
 class CustomLogger
 {
     private $logFilePath;
     private static $instance = null;
 
-    // Private constructor to prevent direct creation of object
+    /**
+     * Private constructor to prevent direct creation of object
+     *
+     * @param string $logFilePath The file path where logs will be written.
+     */
     private function __construct($logFilePath)
     {
         $this->logFilePath = $logFilePath;
     }
 
-    // Method to get the single instance of the class
+    /**
+     * Method to get the single instance of the class
+     *
+     * @param string $logFilePath The file path where logs will be written.
+     * @return CustomLogger The single instance of CustomLogger.
+     */
     public static function getInstance($logFilePath)
     {
         if (self::$instance === null) {
@@ -30,6 +49,12 @@ class CustomLogger
         return self::$instance;
     }
 
+    /**
+     * Logs a message with a specific logging level
+     *
+     * @param string $message The message to log.
+     * @param string $level The logging level of the message. Default is INFO.
+     */
     public function log($message, $level = LoggingLevel::INFO)
     {
         // Check if the function wp_get_current_user exists
@@ -41,15 +66,17 @@ class CustomLogger
         }
 
         // Create log prefix with timestamp, level, and user info
-        $logPrefix = date("Y-m-d H:i:s") . " [{$level}] ({$userInfo}) ";
+        $logPrefix = date("Y-m-d H:i:s") . " [{$level}] ({$userInfo})";
         $logMessage = $logPrefix . $this->formatMessage($message);
 
         switch ($level) {
             case LoggingLevel::TRACE:
+                $logMessage .= "\n";
                 $logMessage .= $this->getStackTrace();
                 break;
             case LoggingLevel::ERROR:
             case LoggingLevel::FATAL:
+                $logMessage .= "\n";
                 $logMessage .= $this->getErrorTrace();
                 break;
             // Add additional cases for other log levels if needed
@@ -71,6 +98,11 @@ class CustomLogger
         }
     }
 
+    /**
+     * Retrieves the stack trace
+     *
+     * @return string The stack trace as a string.
+     */
     private function getStackTrace()
     {
         ob_start();
@@ -79,6 +111,11 @@ class CustomLogger
         return "\n" . $trace;
     }
 
+    /**
+     * Retrieves the error trace
+     *
+     * @return string The error trace as a string.
+     */
     private function getErrorTrace()
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
@@ -98,6 +135,12 @@ class CustomLogger
         return $traceString;
     }
 
+    /**
+     * Formats the message for logging
+     *
+     * @param mixed $message The message to format.
+     * @return string The formatted message.
+     */
     private function formatMessage($message)
     {
         if (is_array($message) || is_object($message)) {
