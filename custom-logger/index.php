@@ -1,6 +1,6 @@
 <?php
 /*
-   Plugin Name: Jon Daley Logger
+   Plugin Name: Custom Logger
    Description: Allow Custom Logging to Handle Errors Gracefully 
    Version: 1.0
    Author: Wafik Tawfik
